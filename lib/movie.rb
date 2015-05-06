@@ -37,9 +37,26 @@ class Movie
     @name = attributes.fetch(:name, @name)
     @id = self.id()
     DB.exec("UPDATE movies SET name = '#{@name}' WHERE id = #{@id};")
+
+    attributes.fetch(:actor_ids, []).each() do |actor_id|
+      DB.exec("INSERT INTO movies_actors (actors_id, movies_id) VALUES (#{actor_id}, #{@id})")
+    end
   end
 
   define_method(:delete) do
+    DB.exec("DELETE FROM movies_actors WHERE movies_id = #{self.id()};")
     DB.exec("DELETE FROM movies WHERE id = #{self.id()};")
+  end
+
+  define_method(:actors) do
+    movie_actors = []
+    results = DB.exec("SELECT actors_id FROM movies_actors WHERE movies_id = #{self.id()}")
+    results.each() do |result|
+      actor_id = result.fetch("actors_id").to_i()
+      actor = DB.exec("SELECT * FROM actors WHERE id  = #{actor_id}")
+      name = actor.first().fetch("name")
+      movie_actors.push(Actor.new({:name => name, :id => actor_id}))
+    end
+    movie_actors
   end
 end

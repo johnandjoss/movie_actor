@@ -41,11 +41,21 @@ describe("#name") do
   end
 
   describe("#update") do
-    it("lest you update movies in the database") do
+    it("lets you update movies in the database") do
       movie = Movie.new({:name => "Oceans Eleven", :id => nil})
       movie.save()
       movie.update({:name => "Oceans Twelve"})
       expect(movie.name()).to(eq("Oceans Twelve"))
+    end
+    it("lets you add an actor to a movie") do
+      movie = Movie.new({:name => "Oceans Eleven", :id => nil})
+      movie.save()
+      george = Actor.new({:name => "George Clooney", :id => nil})
+      george.save()
+      brad = Actor.new({:name => "Brad Pitt", :id => nil})
+      brad.save()
+      movie.update({:actor_ids => [george.id(), brad.id()]})
+      expect(movie.actors()).to(eq([george, brad]))
     end
   end
 
@@ -57,6 +67,19 @@ describe("#name") do
       movie2.save()
       movie.delete()
       expect(Movie.all()).to(eq([movie2]))
+    end
+  end
+
+  describe("#actors") do
+    it("returns all of the actors in a particular movie") do
+      movie = Movie.new({:name => "Oceans Eleven", :id => nil})
+      movie.save()
+      george = Actor.new({:name => "George Clooney", :id => nil})
+      george.save()
+      brad = Actor.new({:name => "Brad Pitt", :id => nil})
+      brad.save()
+      movie.update({:actor_ids => [george.id(), brad.id()]})
+      expect(movie.actors()).to(eq([george, brad]))
     end
   end
 end
