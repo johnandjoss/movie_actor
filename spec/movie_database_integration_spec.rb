@@ -40,7 +40,7 @@ describe("the movie database path", {:type => :feature}) do
 
   it("visits the actor page and adds a movie") do
     visit('/actors')
-    fill_in('name', :with => 'Bradly Cooper')
+    fill_in('name', :with => 'Bradley Cooper')
     click_button('Add actor')
     visit('/movies')
     fill_in('name', :with => 'Toystory')
